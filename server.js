@@ -5,7 +5,6 @@ const mysql = require("mysql2");
 
 const app = express();
 
-//MIDDLEWARES
 app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
@@ -59,7 +58,7 @@ app.listen(3000, () => {
 });
 
 
-//LOGIN PAGE
+//LOGIN 
 app.get("/", (req, res) => {
   // Si ya hay sesión, no mostrar login
   if (req.session.user) {
