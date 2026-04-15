@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ventas</title>
+
+  <style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #010204;
+    color: #e2e8f0;
+    padding: 30px;
+  }
+
+  h1, h2, h3 {
+    margin-bottom: 15px;
+  }
+
+  input {
+    width: 350px;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    background: #252121;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  }
+
+  input::placeholder {
+    color: #94a3b8;
+  }
+
+  #resultados {
+    margin-top: 15px;
+  }
+
+  .album {
+    background: #171819;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  }
+
+  .album:hover {
+    transform: scale(1.02);
+    background: #c71b1b;
+  }
+
+  .container {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+  }
+
+  .card {
+    flex: 1;
+    background: #0b0b0c;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(62, 1, 1, 0.5);
+  }
+
+  #carrito p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #5b0707;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+
+  .delete {
+    background: #9d0000;
+    color: white;
+  }
+
+  .finalizar {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: linear-gradient(135deg, #c01515, #a60e0e);
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgb(255, 0, 0);
+    transition: 0.2s;
+  }
+
+  .finalizar:hover {
+    transform: scale(1.03);
+  }
+</style>
+</head>
+
+<body>
+
+  <h1>🛒 New Sale</h1>
+
+  <!-- BUSCADOR -->
+  <input type="text" id="buscarAlbum" placeholder="🔍 Search album...">
+
+  <!-- RESULTADOS -->
+  <div id="resultados"></div>
+
+  <!-- CARRITO -->
+  <h2>🛒 Cart</h2>
+  <div id="carrito"></div>
+
+  <h3>Total: $<span id="total">0</span></h3>
+
+  <!-- BOTON FINALIZAR -->
+  <button class="finalizar" onclick="finalizarVenta()">💰 Finalize Sale</button>
+
+  <script>
+    let carrito = [];
+    let total = 0;
+
+    // 🔍 BUSCAR
+    document.getElementById("buscarAlbum").addEventListener("input", function() {
+      const texto = this.value;
+
+      fetch(`/buscar?nombre=${texto}`)
+        .then(res => res.json())
+        .then(data => {
+          const contenedor = document.getElementById("resultados");
+          contenedor.innerHTML = "";
+
+          data.forEach(album => {
+            contenedor.innerHTML += `
+              <div class="album" onclick="agregarCarrito(${album.id}, '${album.tittle}', '${album.artist}', ${album.price})">
+                💿 ${album.tittle} ${album.artist}- $${album.price}
+              </div>
+            `;
+          });
+        });
+    });
+
+    // ➕ AGREGAR
+    function agregarCarrito(id, tittle, artist, price) {
+      const album = { id, tittle, artist, price };
+
+      carrito.push(album);
+      total += price;
+
+      actualizarCarrito();
+    }
+
+    // 🔄 ACTUALIZAR UI
+    function actualizarCarrito() {
+      const contenedor = document.getElementById("carrito");
+      contenedor.innerHTML = "";
+
+      carrito.forEach((a, index) => {
+        contenedor.innerHTML += `
+          <p>
+            💿 ${a.tittle}- ${a.artist} - $${a.price}
+            <button onclick="eliminar(${index})">❌</button>
+          </p>
+        `;
+      });
+
+      document.getElementById("total").innerText = total;
+    }
+
+    // ❌ ELIMINAR
+    function eliminar(index) {
+      total -= carrito[index].price;
+      carrito.splice(index, 1);
+      actualizarCarrito();
+    }
+
+    // 💰 FINALIZAR VENTA
+      function finalizarVenta() {
+        if (carrito.length === 0) {
+          alert("No hay productos");
+          return;
+        }
+
+        fetch("/finalizar-venta", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ carrito, total })
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert("Venta realizada ✅");
+
+          carrito = [];
+          total = 0;
+          actualizarCarrito();
+        });
+  }
+  </script>
+
+</body>
+</html>

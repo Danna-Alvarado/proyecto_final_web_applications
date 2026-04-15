@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SoundCore</title>
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body class="login-body">
+
+<div class="container-login">
+
+  <h2>🎸 SoundCore 🎧</h2>
+
+  <form action="/login" method="POST">
+
+    <input 
+      type="text" 
+      name="name" 
+      placeholder="User" 
+      required
+    >
+
+    <input 
+      type="password" 
+      name="password" 
+      placeholder="Password" 
+      required
+    >
+
+    <button type="submit">
+      Access
+    </button>
+
+  </form>
+
+  <!-- MENSAJE DE ERROR -->
+  <p id="error-msg" class="error-msg"></p>
+
+  <!-- 🟢 BOTON REGISTRAR -->
+  <a href="/register" class="register-btn">
+    Create new user
+  </a>
+
+</div>
+
+<!-- SCRIPT PARA MOSTRAR ERROR -->
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+if (params.get("error") === "1") {
+
+  document.getElementById("error-msg").textContent =
+    "User or password incorrect ❌";
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>History</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body {
+background: linear-gradient(black, #111);
+color: white;
+font-family: Arial;
+margin: 0;
+}
+
+header {
+background: #111;
+padding: 20px;
+text-align: center;
+border-bottom: 2px solid red;
+}
+
+.volver {
+position: fixed;
+top: 20px;
+right: 20px;
+background: red;
+padding: 10px;
+color: white;
+text-decoration: none;
+border-radius: 8px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+}
+
+th {
+background: red;
+padding: 10px;
+}
+
+td {
+padding: 10px;
+text-align: center;
+border-bottom: 1px solid #333;
+}
+
+/* TOTAL STYLE */
+.total-box {
+text-align: center;
+font-size: 22px;
+margin-top: 20px;
+font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+📊 Daily Sales History
+</header>
+
+<a href="/dashboard" class="volver">
+⬅ Back
+</a>
+
+<!-- TOTAL DEL DIA -->
+<div id="total-dia" class="total-box">
+💰 Daily Total: $0
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Sale ID</th>
+<th>Date</th>
+<th>Album</th>
+<th>Quantity</th>
+<th>Price</th>
+<th>Total</th>
+</tr>
+
+</thead>
+
+<tbody id="tabla-historial">
+
+</tbody>
+
+</table>
+
+<script>
+
+async function cargarHistorial() {
+
+const res = await fetch("/historial-dia");
+
+const data = await res.json();
+
+let tabla = document.getElementById("tabla-historial");
+
+tabla.innerHTML = "";
+
+data.forEach(venta => {
+
+tabla.innerHTML += `
+<tr>
+
+<td>${venta.venta_id}</td>
+
+<td>${venta.fecha}</td>
+
+<td>${venta.tittle}</td>
+
+<td>${venta.cantidad}</td>
+
+<td>$${venta.precio}</td>
+
+<td>$${venta.total}</td>
+
+</tr>
+`;
+
+});
+
+}
+
+// CARGAR TOTAL DEL DIA
+async function cargarTotalDia() {
+
+const res = await fetch("/total-dia");
+
+const data = await res.json();
+
+let total = data.total_dia || 0;
+
+document.getElementById("total-dia").innerText =
+"💰 Daily Total: $" + total;
+
+}
+
+// CARGAR TODO
+cargarHistorial();
+cargarTotalDia();
+
+</script>
+
+</body>
+
+</html>

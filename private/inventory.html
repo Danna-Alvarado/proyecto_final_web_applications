@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Inventory</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body {
+  background: linear-gradient(black, #111);
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+header {
+  background: #111;
+  padding: 20px;
+  font-size: 22px;
+  text-align: center;
+  border-bottom: 2px solid red;
+}
+
+.logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: red;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.logout-btn:hover {
+  background: darkred;
+}
+
+.inventory-container {
+  padding: 40px;
+}
+
+.add-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.add-btn:hover {
+  background: darkred;
+}
+
+.formulario {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid red;
+}
+
+.formulario input,
+.formulario select {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111;
+}
+
+th {
+  background: red;
+  padding: 12px;
+}
+
+td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #333;
+}
+
+.btn-edit {
+  background: gray;
+  border: none;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-edit:hover {
+  background: #555;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+📦 Inventory Management
+</header>
+
+<a href="/dashboard" class="logout-btn">
+⬅ Back
+</a>
+
+<div class="inventory-container">
+
+<button class="add-btn" onclick="mostrarFormulario()">
+➕ Add Album
+</button>
+
+<div id="formulario" class="formulario" style="display:none;">
+
+<input type="text" id="title" placeholder="Title">
+<input type="text" id="artist" placeholder="Artist">
+
+<select id="id_genre">
+<option value="">Choose genre</option>
+<option value="1">Alternative Rock</option>
+<option value="2">Indie Rock</option>
+<option value="5">K-Pop</option>
+<option value="6">Nu Metal</option>
+<option value="7">Hard Rock</option>
+<option value="8">Heavy Metal</option>
+<option value="9">Trash Metal</option>
+<option value="10">Rap</option>
+<option value="11">Trapp</option>
+<option value="12">Regueton</option>
+<option value="13">Pop</option>
+<option value="14">Regional Mexicano</option>
+</select>
+
+<input type="number" id="anio" placeholder="Year">
+<input type="number" id="price" placeholder="Price">
+<input type="number" id="stock" placeholder="Stock">
+
+<button class="add-btn" onclick="guardarAlbum()">
+Save
+</button>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Title</th>
+<th>Artist</th>
+<th>Genre</th>
+<th>Year</th>
+<th>Price</th>
+<th>Stock</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="tabla-albums">
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+let editandoId = null;
+
+/* MOSTRAR FORMULARIO */
+function mostrarFormulario() {
+
+document.getElementById("formulario").style.display = "block";
+
+document.getElementById("title").value = "";
+document.getElementById("artist").value = "";
+document.getElementById("id_genre").value = "";
+document.getElementById("anio").value = "";
+document.getElementById("price").value = "";
+document.getElementById("stock").value = "";
+
+editandoId = null;
+
+}
+
+
+/* CARGAR ALBUMS */
+async function cargarAlbums() {
+
+const res = await fetch("/albums");
+
+const data = await res.json();
+
+let tabla = document.getElementById("tabla-albums");
+
+tabla.innerHTML = "";
+
+data.forEach(album => {
+
+tabla.innerHTML += `
+<tr>
+
+<td>${album.id}</td>
+
+<td>${album.tittle}</td>
+
+<td>${album.artist}</td>
+
+<td>${album.genero}</td>
+
+<td>${album.anio}</td>
+
+<td>$${album.price}</td>
+
+<td>${album.stock}</td>
+
+<td>
+
+<button class="btn-edit"
+onclick="editar(
+${album.id},
+'${album.tittle}',
+'${album.artist}',
+${album.id_genre},
+${album.anio},
+${album.price},
+${album.stock}
+)">
+
+Edit
+
+</button>
+
+</td>
+
+</tr>
+`;
+
+});
+
+}
+
+
+/* EDITAR */
+function editar(id, tittle, artist, id_genre, anio, price, stock) {
+
+editandoId = id;
+
+document.getElementById("formulario").style.display = "block";
+
+document.getElementById("title").value = tittle;
+document.getElementById("artist").value = artist;
+document.getElementById("id_genre").value = id_genre;
+document.getElementById("anio").value = anio;
+document.getElementById("price").value = price;
+document.getElementById("stock").value = stock;
+
+}
+
+
+/* GUARDAR */
+async function guardarAlbum() {
+
+const title = document.getElementById("title").value;
+const artist = document.getElementById("artist").value;
+const id_genre = document.getElementById("id_genre").value;
+const anio = document.getElementById("anio").value;
+const price = document.getElementById("price").value;
+const stock = document.getElementById("stock").value;
+
+if (title === "" || artist === "" || id_genre === "" || anio === "" || price === "" ||stock === "") 
+{
+
+alert("Completa todos los campos");
+return;
+
+}
+
+if (editandoId === null) {
+
+// CREAR
+await fetch("/albums", {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+title,
+artist,
+id_genre,
+anio,
+price,
+stock
+})
+
+});
+
+} else {
+
+// EDITAR
+await fetch(`/albums/${editandoId}`, {
+
+method: "PUT",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+title,
+artist,
+id_genre,
+anio,
+price,
+stock
+})
+
+});
+
+editandoId = null;
+
+}
+
+document.getElementById("formulario").style.display = "none";
+
+cargarAlbums();
+
+}
+
+
+/* CARGAR AL INICIAR */
+cargarAlbums();
+
+</script>
+
+</body>
+</html>

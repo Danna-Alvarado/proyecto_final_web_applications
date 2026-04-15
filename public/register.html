@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registrar Usuario</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="login-body">
+
+<div class="container-login">
+
+  <h2>📝 Crear Usuario</h2>
+
+  <form action="/register" method="POST">
+
+    <input 
+      type="text" 
+      name="name" 
+      placeholder="Nuevo usuario"
+      required
+    >
+
+    <input 
+      type="password" 
+      name="password" 
+      placeholder="Nueva contraseña"
+      required
+    >
+
+    <button type="submit">
+      Registrar
+    </button>
+
+  </form>
+
+  <a href="/" class="register-btn">
+    Volver al login
+  </a>
+
+</div>
+
+</body>
+</html>
