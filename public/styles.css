@@ -203,3 +203,70 @@ header {
   background-color: darkred;
 
 }
+
+* {
+  box-sizing: border-box;
+}
+
+/* LOGIN  */
+@media (max-width: 600px) {
+
+  .login-body {
+    padding: 15px;
+    height: auto; 
+  }
+
+  .container-login {
+    width: 100%;
+    max-width: 320px;
+    padding: 25px;
+  }
+
+  .container-login h2 {
+    font-size: 20px;
+  }
+
+}
+
+/* DASHBOARD  */
+@media (max-width: 600px) {
+
+  header {
+    font-size: 18px;
+    padding: 15px;
+  }
+
+  .container {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .card h3 {
+    font-size: 16px;
+  }
+
+  .card button {
+    width: 100%;
+  }
+
+}
+
+/* BOTON LOGOUT */
+@media (max-width: 600px) {
+
+  .logout-btn {
+
+    top: 10px;
+    right: 10px;
+
+    padding: 8px 10px;
+
+    font-size: 12px;
+
+  }
+
+}

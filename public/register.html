@@ -3,38 +3,39 @@
 <head>
   <title>Registrar Usuario</title>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="login-body">
 
 <div class="container-login">
 
-  <h2>📝 Crear Usuario</h2>
+  <h2>📝 Create  User</h2>
 
   <form action="/register" method="POST">
 
     <input 
       type="text" 
       name="name" 
-      placeholder="Nuevo usuario"
+      placeholder="New username"
       required
     >
 
     <input 
       type="password" 
       name="password" 
-      placeholder="Nueva contraseña"
+      placeholder="New password"
       required
     >
 
     <button type="submit">
-      Registrar
+      Register
     </button>
 
   </form>
 
   <a href="/" class="register-btn">
-    Volver al login
+    Back to Login
   </a>
 
 </div>

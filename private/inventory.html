@@ -24,8 +24,8 @@ header {
 
 .logout-btn {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
   background: red;
   color: white;
   padding: 10px 15px;
@@ -38,10 +38,13 @@ header {
   background: darkred;
 }
 
+/* CONTENEDOR */
 .inventory-container {
-  padding: 40px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
+/* BOTONES */
 .add-btn {
   background: red;
   color: white;
@@ -57,37 +60,67 @@ header {
   background: darkred;
 }
 
+.btn-delete {
+  background: #9d0000;
+  border: none;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.btn-delete:hover {
+  background: darkred;
+}
+
+/* FORMULARIO */
 .formulario {
   background: #1a1a1a;
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
   border: 1px solid red;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .formulario input,
 .formulario select {
   padding: 10px;
-  margin: 5px;
   border-radius: 5px;
   border: none;
+
+  flex: 1 1 150px;
+  min-width: 120px;
+}
+
+/* TABLA */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   background: #111;
+  min-width: 700px;
 }
 
 th {
   background: red;
   padding: 12px;
+  font-size: 14px;
 }
 
 td {
   padding: 10px;
   text-align: center;
   border-bottom: 1px solid #333;
+  font-size: 14px;
 }
 
 .btn-edit {
@@ -103,13 +136,32 @@ td {
   background: #555;
 }
 
+/* RESPONSIVE */
+@media (max-width: 600px) {
+
+header {
+  font-size: 18px;
+  padding: 15px;
+}
+
+.logout-btn {
+  font-size: 12px;
+  padding: 8px 10px;
+}
+
+.add-btn {
+  width: 100%;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-📦 Inventory Management
+Inventory Management
 </header>
 
 <a href="/dashboard" class="logout-btn">
@@ -121,6 +173,23 @@ td {
 <button class="add-btn" onclick="mostrarFormulario()">
 ➕ Add Album
 </button>
+<div style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap:wrap;">
+
+<input 
+type="text" 
+id="buscarInput" 
+placeholder="🔍 Search album..."
+style="padding:10px; border-radius:8px; border:none; flex:1; min-width:200px;">
+
+<button class="add-btn" onclick="buscarAlbum()">
+🔍 Search
+</button>
+
+<button class="add-btn" onclick="cargarAlbums()">
+🔄 Show All
+</button>
+
+</div>
 
 <div id="formulario" class="formulario" style="display:none;">
 
@@ -153,6 +222,8 @@ Save
 
 </div>
 
+<div class="table-container">
+
 <table>
 
 <thead>
@@ -175,11 +246,13 @@ Save
 
 </div>
 
+</div>
+
 <script>
 
 let editandoId = null;
 
-/* MOSTRAR FORMULARIO */
+/* FORMULARIO */
 function mostrarFormulario() {
 
 document.getElementById("formulario").style.display = "block";
@@ -195,13 +268,14 @@ editandoId = null;
 
 }
 
-
-/* CARGAR ALBUMS */
+/* CARGAR */
 async function cargarAlbums() {
 
 const res = await fetch("/albums");
 
 const data = await res.json();
+
+console.log(data); 
 
 let tabla = document.getElementById("tabla-albums");
 
@@ -213,17 +287,11 @@ tabla.innerHTML += `
 <tr>
 
 <td>${album.id}</td>
-
 <td>${album.tittle}</td>
-
 <td>${album.artist}</td>
-
 <td>${album.genero}</td>
-
 <td>${album.anio}</td>
-
 <td>$${album.price}</td>
-
 <td>${album.stock}</td>
 
 <td>
@@ -238,9 +306,12 @@ ${album.anio},
 ${album.price},
 ${album.stock}
 )">
-
 Edit
+</button>
 
+<button class="btn-delete"
+onclick="eliminar(${album.id})">
+Delete
 </button>
 
 </td>
@@ -252,7 +323,60 @@ Edit
 
 }
 
+async function buscarAlbum() {
 
+  const texto = document.getElementById("buscarInput").value;
+
+  if (texto === "") {
+    cargarAlbums();
+    return;
+  }
+
+  const res = await fetch(`/buscar?nombre=${texto}`);
+  const data = await res.json();
+
+  let tabla = document.getElementById("tabla-albums");
+  tabla.innerHTML = "";
+
+  data.forEach(album => {
+
+    tabla.innerHTML += `
+    <tr>
+
+      <td>${album.id}</td>
+      <td>${album.tittle}</td>
+      <td>${album.artist}</td>
+      <td>${album.genero}</td>
+      <td>${album.anio}</td>
+      <td>$${album.price}</td>
+      <td>${album.stock}</td>
+
+      <td>
+
+        <button class="btn-edit"
+        onclick="editar(
+          ${album.id},
+          '${album.tittle}',
+          '${album.artist}',
+          ${album.id_genre},
+          ${album.anio},
+          ${album.price},
+          ${album.stock}
+        )">
+        Edit
+        </button>
+
+        <button class="btn-delete"
+        onclick="eliminar(${album.id})">
+        Delete
+        </button>
+
+      </td>
+
+    </tr>`;
+  });
+
+}
 /* EDITAR */
 function editar(id, tittle, artist, id_genre, anio, price, stock) {
 
@@ -269,7 +393,6 @@ document.getElementById("stock").value = stock;
 
 }
 
-
 /* GUARDAR */
 async function guardarAlbum() {
 
@@ -280,25 +403,20 @@ const anio = document.getElementById("anio").value;
 const price = document.getElementById("price").value;
 const stock = document.getElementById("stock").value;
 
-if (title === "" || artist === "" || id_genre === "" || anio === "" || price === "" ||stock === "") 
-{
+if (title === "" || artist === "" || id_genre === "" || anio === "" || price === "" || stock === "") {
 
-alert("Completa todos los campos");
+alert("Complete all fields.");
 return;
 
 }
 
 if (editandoId === null) {
 
-// CREAR
 await fetch("/albums", {
-
 method: "POST",
-
 headers: {
 "Content-Type": "application/json"
 },
-
 body: JSON.stringify({
 title,
 artist,
@@ -307,20 +425,15 @@ anio,
 price,
 stock
 })
-
 });
 
 } else {
 
-// EDITAR
 await fetch(`/albums/${editandoId}`, {
-
 method: "PUT",
-
 headers: {
 "Content-Type": "application/json"
 },
-
 body: JSON.stringify({
 title,
 artist,
@@ -329,7 +442,6 @@ anio,
 price,
 stock
 })
-
 });
 
 editandoId = null;
@@ -342,8 +454,19 @@ cargarAlbums();
 
 }
 
+/* DELETE */
+async function eliminar(id) {
 
-/* CARGAR AL INICIAR */
+if (!confirm("Delete this album?")) return;
+
+await fetch(`/albums/${id}`, {
+method: "DELETE"
+});
+
+cargarAlbums();
+
+}
+
 cargarAlbums();
 
 </script>

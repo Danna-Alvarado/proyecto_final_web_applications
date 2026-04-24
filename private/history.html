@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <title>History</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewpsort" content="width=device-width, initial-scale=1.0">
 
 <style>
 
@@ -22,40 +22,71 @@ text-align: center;
 border-bottom: 2px solid red;
 }
 
+/* BOTON BACK */
 .volver {
 position: fixed;
-top: 20px;
-right: 20px;
+top: 15px;
+right: 15px;
 background: red;
 padding: 10px;
 color: white;
 text-decoration: none;
 border-radius: 8px;
+font-size: 14px;
+}
+
+/* CONTENEDOR */
+.table-container {
+width: 100%;
+overflow-x: auto;
+padding: 10px;
+box-sizing: border-box;
 }
 
 table {
 width: 100%;
 border-collapse: collapse;
 margin-top: 20px;
+min-width: 600px; 
 }
 
 th {
 background: red;
 padding: 10px;
+font-size: 14px;
 }
 
 td {
 padding: 10px;
 text-align: center;
 border-bottom: 1px solid #333;
+font-size: 14px;
 }
 
-/* TOTAL*/
 .total-box {
 text-align: center;
 font-size: 22px;
 margin-top: 20px;
 font-weight: bold;
+}
+
+/* MEDIA QUERY PARA CELULARES */
+@media (max-width: 600px) {
+
+header {
+font-size: 18px;
+padding: 15px;
+}
+
+.total-box {
+font-size: 18px;
+}
+
+.volver {
+font-size: 12px;
+padding: 8px;
+}
+
 }
 
 </style>
@@ -72,10 +103,12 @@ font-weight: bold;
 ⬅ Back
 </a>
 
-<!-- TOTAL DEL DIA -->
+
 <div id="total-dia" class="total-box">
 💰 Daily Total: $0
 </div>
+
+<div class="table-container">
 
 <table>
 
@@ -97,6 +130,8 @@ font-weight: bold;
 </tbody>
 
 </table>
+
+</div>
 
 <script>
 
